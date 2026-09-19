@@ -77,6 +77,44 @@ static int cadastrarSessao(Sessao sessoes[], int *quantidade) {
     return 1;
 }
 
+static void mostrarSessao(const Sessao *sessao) {
+    printf("ID: %d | Energia: %.2f kWh | Tempo: %.2f h | "
+           "Potencia: %.2f kW | Tarifa: R$ %.2f/kWh | Custo: R$ %.2f\n",
+           sessao->id, sessao->energia, sessao->tempo,
+           sessao->potencia, sessao->tarifa, sessao->custo);
+}
+
+static void listarSessoes(const Sessao sessoes[], int quantidade) {
+    if (!quantidade) {
+        puts("Nenhuma sessao cadastrada.");
+        return;
+    }
+    puts("\n========= SESSOES =========");
+    for (int i = 0; i < quantidade; ++i) mostrarSessao(&sessoes[i]);
+}
+
+static int buscaLinear(const Sessao sessoes[], int quantidade, int id) {
+    for (int i = 0; i < quantidade; ++i) {
+        if (sessoes[i].id == id) return i;
+    }
+    return -1;
+}
+
+static int buscarSessao(const Sessao sessoes[], int quantidade) {
+    double id;
+    int indice;
+    if (!quantidade) {
+        puts("Nenhuma sessao cadastrada.");
+        return 1;
+    }
+    if (!lerNumero("Digite o ID da sessao (1 a 100): ", 1, MAX_SESSOES, 1, &id))
+        return 0;
+    indice = buscaLinear(sessoes, quantidade, (int)id);
+    if (indice < 0) puts("Sessao nao encontrada.");
+    else mostrarSessao(&sessoes[indice]);
+    return 1;
+}
+
 int main(void) {
     Sessao sessoes[MAX_SESSOES];
     int quantidade = 0;
@@ -90,6 +128,9 @@ int main(void) {
         if (!lerNumero("Escolha: ", 1, 6, 1, &opcao) || opcao == 6) break;
         if (opcao == 1) {
             if (!cadastrarSessao(sessoes, &quantidade)) break;
+        } else if (opcao == 2) listarSessoes(sessoes, quantidade);
+        else if (opcao == 3) {
+            if (!buscarSessao(sessoes, quantidade)) break;
         } else puts("Operacao em desenvolvimento.");
     }
     puts("Programa encerrado. As sessoes desta execucao nao sao salvas em arquivo.");
