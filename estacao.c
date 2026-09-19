@@ -115,6 +115,44 @@ static int buscarSessao(const Sessao sessoes[], int quantidade) {
     return 1;
 }
 
+static double valorOrdenacao(const Sessao *sessao, int criterio) {
+    switch (criterio) {
+        case 1: return sessao->id;
+        case 2: return sessao->energia;
+        case 3: return sessao->custo;
+        default: return sessao->tempo;
+    }
+}
+
+static void insertionSort(Sessao sessoes[], int quantidade, int criterio) {
+    for (int i = 1; i < quantidade; ++i) {
+        Sessao atual = sessoes[i];
+        int j = i - 1;
+        /* Move a estrutura inteira para preservar os dados de cada sessao. */
+        while (j >= 0 && valorOrdenacao(&sessoes[j], criterio) >
+                         valorOrdenacao(&atual, criterio)) {
+            sessoes[j + 1] = sessoes[j];
+            --j;
+        }
+        sessoes[j + 1] = atual;
+    }
+}
+
+static int ordenarSessoes(Sessao sessoes[], int quantidade) {
+    double criterio;
+    if (!quantidade) {
+        puts("Nenhuma sessao cadastrada.");
+        return 1;
+    }
+    puts("Ordenar em ordem crescente por:");
+    puts("1 - ID\n2 - Energia\n3 - Custo\n4 - Tempo");
+    if (!lerNumero("Criterio: ", 1, 4, 1, &criterio)) return 0;
+    insertionSort(sessoes, quantidade, (int)criterio);
+    puts("Sessoes ordenadas em ordem crescente.");
+    listarSessoes(sessoes, quantidade);
+    return 1;
+}
+
 int main(void) {
     Sessao sessoes[MAX_SESSOES];
     int quantidade = 0;
@@ -131,6 +169,8 @@ int main(void) {
         } else if (opcao == 2) listarSessoes(sessoes, quantidade);
         else if (opcao == 3) {
             if (!buscarSessao(sessoes, quantidade)) break;
+        } else if (opcao == 4) {
+            if (!ordenarSessoes(sessoes, quantidade)) break;
         } else puts("Operacao em desenvolvimento.");
     }
     puts("Programa encerrado. As sessoes desta execucao nao sao salvas em arquivo.");
