@@ -1,0 +1,40 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compilar programa C",
+      "type": "process",
+      "command": "gcc",
+      "args": ["-std=c11", "-Wall", "-Wextra", "-Wpedantic", "-Werror", "-g", "estacao.c", "-o", "estacao.exe", "-lm"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": ["$gcc"],
+      "group": {"kind": "build", "isDefault": true}
+    },
+    {
+      "label": "Executar estacao de recarga",
+      "type": "process",
+      "command": "${workspaceFolder}/estacao.exe",
+      "dependsOn": "Compilar programa C",
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": [],
+      "presentation": {"reveal": "always", "focus": true, "panel": "dedicated", "clear": true}
+    },
+    {
+      "label": "Compilar testes C",
+      "type": "process",
+      "command": "gcc",
+      "args": ["-std=c11", "-Wall", "-Wextra", "-Wpedantic", "-Werror", "testes.c", "-o", "testes.exe", "-lm"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Executar testes C",
+      "type": "process",
+      "command": "${workspaceFolder}/testes.exe",
+      "dependsOn": "Compilar testes C",
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": [],
+      "group": "test"
+    }
+  ]
+}
