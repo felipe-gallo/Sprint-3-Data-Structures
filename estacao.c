@@ -153,6 +153,26 @@ static int ordenarSessoes(Sessao sessoes[], int quantidade) {
     return 1;
 }
 
+static void mostrarEstatisticas(const Sessao sessoes[], int quantidade) {
+    double energiaTotal = 0, faturamento = 0;
+    double maior = 0, menor = 0;
+    if (quantidade) maior = menor = sessoes[0].energia;
+    for (int i = 0; i < quantidade; ++i) {
+        energiaTotal += sessoes[i].energia;
+        faturamento += sessoes[i].custo;
+        if (sessoes[i].energia > maior) maior = sessoes[i].energia;
+        if (sessoes[i].energia < menor) menor = sessoes[i].energia;
+    }
+    puts("\n========= ESTATISTICAS =========");
+    printf("Sessoes realizadas: %d\n", quantidade);
+    printf("Energia fornecida: %.2f kWh\n", energiaTotal);
+    printf("Faturamento: R$ %.2f\n", faturamento);
+    printf("Ticket medio: R$ %.2f\n", quantidade ? faturamento / quantidade : 0);
+    if (quantidade) {
+        printf("Maior consumo: %.2f kWh\nMenor consumo: %.2f kWh\n", maior, menor);
+    } else puts("Maior e menor consumo: indisponiveis (nenhuma sessao).");
+}
+
 int main(void) {
     Sessao sessoes[MAX_SESSOES];
     int quantidade = 0;
@@ -171,7 +191,7 @@ int main(void) {
             if (!buscarSessao(sessoes, quantidade)) break;
         } else if (opcao == 4) {
             if (!ordenarSessoes(sessoes, quantidade)) break;
-        } else puts("Operacao em desenvolvimento.");
+        } else if (opcao == 5) mostrarEstatisticas(sessoes, quantidade);
     }
     puts("Programa encerrado. As sessoes desta execucao nao sao salvas em arquivo.");
     return 0;
