@@ -54,12 +54,33 @@ static int lerNumero(const char *mensagem, double minimo, double maximo,
     }
 }
 
+static int cadastrarSessao(Sessao sessoes[], int *quantidade) {
+    Sessao nova;
+    if (*quantidade == MAX_SESSOES) {
+        puts("Limite de 100 sessoes atingido.");
+        return 1;
+    }
+    /* So altera o vetor depois de receber todos os dados validos. */
+    if (!lerNumero("Potencia do carregador (kW, 0.01 a 1000): ",
+                   0.01, 1000, 0, &nova.potencia) ||
+        !lerNumero("Tempo de recarga (horas, 0.01 a 168): ",
+                   0.01, 168, 0, &nova.tempo) ||
+        !lerNumero("Tarifa (R$/kWh, 0 a 100): ",
+                   0, 100, 0, &nova.tarifa)) return 0;
+    nova.id = *quantidade + 1;
+    nova.energia = nova.potencia * nova.tempo;
+    nova.custo = nova.energia * nova.tarifa;
+    sessoes[*quantidade] = nova;
+    ++*quantidade;
+    printf("Sessao %d cadastrada. Energia: %.2f kWh | Custo: R$ %.2f\n",
+           nova.id, nova.energia, nova.custo);
+    return 1;
+}
+
 int main(void) {
     Sessao sessoes[MAX_SESSOES];
     int quantidade = 0;
     double opcao;
-    (void)sessoes;
-    (void)quantidade;
     while (1) {
         puts("\n=====================================");
         puts("         ESTACAO DE RECARGA");
@@ -67,7 +88,9 @@ int main(void) {
         puts("1 - Nova sessao de recarga\n2 - Listar sessoes\n3 - Buscar sessao");
         puts("4 - Ordenar sessoes\n5 - Estatisticas\n6 - Encerrar");
         if (!lerNumero("Escolha: ", 1, 6, 1, &opcao) || opcao == 6) break;
-        puts("Operacao em desenvolvimento.");
+        if (opcao == 1) {
+            if (!cadastrarSessao(sessoes, &quantidade)) break;
+        } else puts("Operacao em desenvolvimento.");
     }
     puts("Programa encerrado. As sessoes desta execucao nao sao salvas em arquivo.");
     return 0;
